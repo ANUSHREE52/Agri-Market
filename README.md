@@ -91,29 +91,6 @@ C:\Agri-Market-Frontend/
 ### No Installation Required!
 This is a pure frontend application. Just open `index.html` in any modern web browser and start using it immediately.
 
-## 📱 Features Roadmap
-
-### Planned Features
-- [ ] Image upload for crops
-- [ ] User profile editing
-- [ ] Order status updates
-- [ ] Rating and review system
-- [ ] Chat between farmers and buyers
-- [ ] Export data to CSV
-- [ ] Print receipts
-- [ ] Email notifications
-- [ ] Multi-language support
-- [ ] Dark mode
-
-### Future Enhancements
-- [ ] Convert to Progressive Web App (PWA)
-- [ ] Add offline support
-- [ ] Implement real backend API
-- [ ] Payment gateway integration
-- [ ] SMS notifications
-- [ ] Analytics dashboard
-- [ ] Mobile app (React Native/Flutter)
-
 ## 📄 License
 
 Open source project for educational purposes. Free to use and modify.
