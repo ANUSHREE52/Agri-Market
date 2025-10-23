@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard - Agri-Market</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="../index.html" class="navbar-brand">
+                <i class="fas fa-seedling"></i>
+                Agri-Market
+            </a>
+            <ul class="navbar-menu">
+                <li><a href="customer-dashboard.html">Dashboard</a></li>
+                <li><a href="../pages/marketplace.html">Marketplace</a></li>
+                <li><a href="#" onclick="handleLogout()">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <section style="background: linear-gradient(135deg, var(--primary-green), var(--light-green)); color: white; padding: 40px 20px;">
+        <div class="container">
+            <h1><i class="fas fa-user"></i> Customer Dashboard</h1>
+            <p style="font-size: 1.1rem;">Welcome, <span id="userName"></span>!</p>
+        </div>
+    </section>
+
+    <!-- Statistics Cards -->
+    <section style="padding: 40px 20px;">
+        <div class="container">
+            <div class="grid grid-4">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalOrders">0</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #ffc107, #ff9800);">
+                    <div class="stat-value" id="pendingOrders">0</div>
+                    <div class="stat-label">Pending Orders</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #28a745, #218838);">
+                    <div class="stat-value" id="completedOrders">0</div>
+                    <div class="stat-label">Completed Orders</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #17a2b8, #138496);">
+                    <div class="stat-value" id="totalSpent">₹0</div>
+                    <div class="stat-label">Total Spent</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section style="padding: 0 20px 40px;">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Quick Actions</h2>
+                </div>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <a href="../pages/marketplace.html" class="btn btn-primary">
+                        <i class="fas fa-shopping-cart"></i> Browse Products
+                    </a>
+                    <button class="btn btn-secondary" onclick="loadOrders()">
+                        <i class="fas fa-sync"></i> Refresh Orders
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- My Orders Section -->
+    <section style="padding: 0 20px 40px;">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">My Purchase Requests</h2>
+                </div>
+                <div class="table-container">
+                    <table class="table" id="ordersTable">
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Crop</th>
+                                <th>Farmer</th>
+                                <th>Quantity</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <!-- Orders will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="emptyOrders" class="hidden" style="text-align: center; padding: 40px;">
+                    <i class="fas fa-shopping-bag" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                    <h3>No purchase requests yet</h3>
+                    <p>Start shopping from our marketplace</p>
+                    <a href="../pages/marketplace.html" class="btn btn-primary mt-2">
+                        <i class="fas fa-store"></i> Browse Marketplace
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Purchase Request Details Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Purchase Request Details</h2>
+                <button class="modal-close" onclick="closeModal('orderModal')">&times;</button>
+            </div>
+            <div id="orderModalBody">
+                <!-- Purchase request details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Agri-Market. Empowering Farmers, Connecting Communities.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/api.js"></script>
+    <script src="../js/utils.js"></script>
+    <script>
+        let currentUser = null;
+        let allOrders = [];
+
+        // Initialize dashboard
+        window.onload = async function() {
+            if (!requireAuth()) return;
+            
+            currentUser = getCurrentUser();
+            
+            if (currentUser.user_type !== 'customer') {
+                showToast('Access denied', 'error');
+                window.location.href = `${currentUser.user_type}-dashboard.html`;
+                return;
+            }
+
+            document.getElementById('userName').textContent = currentUser.full_name;
+            
+            await loadStatistics();
+            await loadOrders();
+        };
+
+        // Load statistics
+        async function loadStatistics() {
+            const stats = await api.getStatistics(currentUser.user_id, 'customer');
+            
+            document.getElementById('totalOrders').textContent = stats.total_orders;
+            document.getElementById('pendingOrders').textContent = stats.pending_orders;
+            document.getElementById('completedOrders').textContent = stats.completed_orders;
+            document.getElementById('totalSpent').textContent = formatCurrency(stats.total_spent);
+        }
+
+        // Load orders
+        async function loadOrders() {
+            const tbody = document.getElementById('ordersTableBody');
+            const emptyState = document.getElementById('emptyOrders');
+            const table = document.getElementById('ordersTable');
+            
+            allOrders = await api.getTransactionsByBuyer(currentUser.user_id);
+            
+            if (allOrders.length === 0) {
+                table.style.display = 'none';
+                emptyState.classList.remove('hidden');
+            } else {
+                table.style.display = 'table';
+                emptyState.classList.add('hidden');
+                tbody.innerHTML = allOrders.map(order => `
+                    <tr>
+                        <td>${order.transaction_id}</td>
+                        <td>${order.crop_name}</td>
+                        <td>${order.farmer_name}</td>
+                        <td>${order.quantity_sold}</td>
+                        <td>${formatCurrency(order.total_amount)}</td>
+                        <td>${formatDate(order.transaction_date)}</td>
+                        <td><span class="badge ${getStatusBadgeClass(order.status)}">${capitalize(order.status)}</span></td>
+                        <td>
+                            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.875rem;" onclick="viewOrder('${order.transaction_id}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // View order details
+        async function viewOrder(transactionId) {
+            const order = allOrders.find(o => o.transaction_id === transactionId);
+            
+            if (!order) {
+                showToast('Order not found', 'error');
+                return;
+            }
+
+            const modalBody = document.getElementById('orderModalBody');
+            modalBody.innerHTML = `
+                <div style="padding: 20px 0;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div>
+                            <strong>Request ID:</strong><br>
+                            ${order.transaction_id}
+                        </div>
+                        <div>
+                            <strong>Status:</strong><br>
+                            <span class="badge ${getStatusBadgeClass(order.status)}">${capitalize(order.status)}</span>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h4>Product Details</h4>
+                    <p><strong>Crop:</strong> ${order.crop_name}</p>
+                    <p><strong>Quantity:</strong> ${order.quantity_sold}</p>
+                    <p><strong>Price per Unit:</strong> ${formatCurrency(order.price_per_unit)}</p>
+                    <p><strong>Total Amount:</strong> <span style="font-size: 1.5rem; color: var(--accent-orange);">${formatCurrency(order.total_amount)}</span></p>
+                    
+                    <hr>
+                    
+                    <h4>Farmer Details</h4>
+                    <p><strong>Name:</strong> ${order.farmer_name}</p>
+                    
+                    <hr>
+                    
+                    <h4>Delivery Information</h4>
+                    <p><strong>Address:</strong> ${order.delivery_address}</p>
+                    ${order.notes ? `<p><strong>Notes:</strong> ${order.notes}</p>` : ''}
+                    
+                    <hr>
+                    
+                    <p><strong>Request Date:</strong> ${formatDateTime(order.transaction_date)}</p>
+                </div>
+            `;
+
+            document.getElementById('orderModal').classList.add('show');
+        }
+
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Handle logout
+        function handleLogout() {
+            api.logout();
+            showToast('Logged out successfully', 'success');
+            setTimeout(() => {
+                window.location.href = '../index.html';
+            }, 1000);
+        }
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>

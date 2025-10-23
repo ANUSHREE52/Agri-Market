@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Dashboard - Agri-Market</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="../index.html" class="navbar-brand">
+                <i class="fas fa-seedling"></i>
+                Agri-Market
+            </a>
+            <ul class="navbar-menu">
+                <li><a href="farmer-dashboard.html">Dashboard</a></li>
+                <li><a href="../pages/marketplace.html">Marketplace</a></li>
+                <li><a href="#" onclick="handleLogout()">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <section style="background: linear-gradient(135deg, var(--primary-green), var(--light-green)); color: white; padding: 40px 20px;">
+        <div class="container">
+            <h1><i class="fas fa-tractor"></i> Farmer Dashboard</h1>
+            <p style="font-size: 1.1rem;">Welcome, <span id="farmerName"></span>!</p>
+        </div>
+    </section>
+
+    <!-- Statistics Cards -->
+    <section style="padding: 40px 20px;">
+        <div class="container">
+            <div class="grid grid-4">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalCrops">0</div>
+                    <div class="stat-label">Total Crops</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #ff6b35, #f7931e);">
+                    <div class="stat-value" id="activeCrops">0</div>
+                    <div class="stat-label">Active Listings</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #17a2b8, #138496);">
+                    <div class="stat-value" id="totalSales">0</div>
+                    <div class="stat-label">Total Sales</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #28a745, #218838);">
+                    <div class="stat-value" id="totalRevenue">₹0</div>
+                    <div class="stat-label">Total Revenue</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section style="padding: 0 20px 40px;">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Quick Actions</h2>
+                </div>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="showAddCropModal()">
+                        <i class="fas fa-plus"></i> Add New Crop
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadMyCrops()">
+                        <i class="fas fa-sync"></i> Refresh Crops
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- My Crops Section -->
+    <section style="padding: 0 20px 40px;">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">My Crops</h2>
+                </div>
+                <div id="cropsContainer" class="grid grid-3">
+                    <!-- Crops will be loaded here -->
+                </div>
+                <div id="emptyCrops" class="hidden" style="text-align: center; padding: 40px;">
+                    <i class="fas fa-seedling" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                    <h3>No crops added yet</h3>
+                    <p>Start by adding your first crop to the marketplace</p>
+                    <button class="btn btn-primary mt-2" onclick="showAddCropModal()">
+                        <i class="fas fa-plus"></i> Add Crop
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sales History Section -->
+    <section style="padding: 0 20px 40px;">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Purchase Requests</h2>
+                </div>
+                <div class="table-container">
+                    <table class="table" id="salesTable">
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Crop</th>
+                                <th>Buyer</th>
+                                <th>Quantity</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesTableBody">
+                            <!-- Sales will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="emptySales" class="hidden" style="text-align: center; padding: 40px;">
+                    <i class="fas fa-receipt" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                    <h3>No purchase requests yet</h3>
+                    <p>Purchase requests from buyers will appear here</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add Crop Modal -->
+    <div id="addCropModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2>Add New Crop</h2>
+                <button class="modal-close" onclick="closeModal('addCropModal')">&times;</button>
+            </div>
+            <form id="addCropForm" onsubmit="handleAddCrop(event)">
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Crop Name</label>
+                        <input type="text" class="form-control" id="cropName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-control form-select" id="cropCategory" required>
+                            <option value="">Select category</option>
+                            <option value="Vegetables">Vegetables</option>
+                            <option value="Fruits">Fruits</option>
+                            <option value="Grains">Grains</option>
+                            <option value="Pulses">Pulses</option>
+                            <option value="Spices">Spices</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Quantity Available (Minimum: 100 kg or 1 quintal)</label>
+                        <input type="number" class="form-control" id="cropQuantity" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Unit</label>
+                        <select class="form-control form-select" id="cropUnit" required onchange="updateMinQuantity()">
+                            <option value="kg">Kilogram (kg) - Min: 100</option>
+                            <option value="quintal">Quintal - Min: 1</option>
+                            <option value="ton">Ton - Min: 0.1</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Price per Unit (₹)</label>
+                        <input type="number" class="form-control" id="cropPrice" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Harvest Date</label>
+                        <input type="date" class="form-control" id="cropHarvestDate" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-control" id="cropLocation" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" id="cropDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <input type="checkbox" id="cropOrganic"> This is an organic crop
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-plus"></i> Add Crop
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Agri-Market. Empowering Farmers, Connecting Communities.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/api.js"></script>
+    <script src="../js/utils.js"></script>
+    <script>
+        let currentUser = null;
+
+        // Initialize dashboard
+        window.onload = async function() {
+            if (!requireAuth()) return;
+            
+            currentUser = getCurrentUser();
+            
+            if (currentUser.user_type !== 'farmer') {
+                showToast('Access denied', 'error');
+                window.location.href = `${currentUser.user_type}-dashboard.html`;
+                return;
+            }
+
+            document.getElementById('farmerName').textContent = currentUser.full_name;
+            
+            await loadStatistics();
+            await loadMyCrops();
+            await loadSales();
+        };
+
+        // Load statistics
+        async function loadStatistics() {
+            const stats = await api.getStatistics(currentUser.user_id, 'farmer');
+            
+            document.getElementById('totalCrops').textContent = stats.total_crops;
+            document.getElementById('activeCrops').textContent = stats.active_crops;
+            document.getElementById('totalSales').textContent = stats.total_sales;
+            document.getElementById('totalRevenue').textContent = formatCurrency(stats.total_revenue);
+        }
+
+        // Load my crops
+        async function loadMyCrops() {
+            const container = document.getElementById('cropsContainer');
+            const emptyState = document.getElementById('emptyCrops');
+            
+            const crops = await api.getCropsByFarmer(currentUser.user_id);
+            
+            if (crops.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                container.innerHTML = crops.map(crop => `
+                    <div class="product-card">
+                        <img src="${crop.crop_image || 'https://via.placeholder.com/400x200?text=Crop+Image'}" alt="${crop.crop_name}" class="product-image">
+                        <div class="product-info">
+                            <h3 class="product-title">${crop.crop_name}</h3>
+                            <div class="badge badge-success mb-1">${crop.category}</div>
+                            ${crop.is_organic ? '<div class="badge badge-info mb-1">Organic</div>' : ''}
+                            <p class="product-price">${formatCurrency(crop.price_per_unit)}/${crop.unit}</p>
+                            <p style="color: #6c757d;">
+                                <i class="fas fa-box"></i> ${crop.quantity_available} ${crop.unit} available
+                            </p>
+                            <p style="color: #6c757d; font-size: 0.875rem;">
+                                Added: ${formatDate(crop.created_at)}
+                            </p>
+                            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                                <button class="btn btn-danger" onclick="deleteCrop('${crop.crop_id}')" style="flex: 1; padding: 8px;">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Load sales
+        async function loadSales() {
+            const tbody = document.getElementById('salesTableBody');
+            const emptyState = document.getElementById('emptySales');
+            const table = document.getElementById('salesTable');
+            
+            const sales = await api.getTransactionsByFarmer(currentUser.user_id);
+            
+            if (sales.length === 0) {
+                table.style.display = 'none';
+                emptyState.classList.remove('hidden');
+            } else {
+                table.style.display = 'table';
+                emptyState.classList.add('hidden');
+                tbody.innerHTML = sales.map(sale => `
+                    <tr>
+                        <td>${sale.transaction_id}</td>
+                        <td>${sale.crop_name}</td>
+                        <td>${sale.buyer_name} <span class="badge ${getUserTypeBadgeClass(sale.buyer_type)}">${capitalize(sale.buyer_type)}</span></td>
+                        <td>${sale.quantity_sold}</td>
+                        <td>${formatCurrency(sale.total_amount)}</td>
+                        <td>${formatDate(sale.transaction_date)}</td>
+                        <td><span class="badge ${getStatusBadgeClass(sale.status)}">${capitalize(sale.status)}</span></td>
+                        <td>
+                            ${sale.status === 'pending' ? `
+                                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.875rem; margin-right: 5px;" onclick="approveRequest('${sale.transaction_id}')">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.875rem;" onclick="rejectRequest('${sale.transaction_id}')">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
+                            ` : `
+                                <span style="color: #6c757d; font-size: 0.875rem;">-</span>
+                            `}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // Update minimum quantity based on unit
+        function updateMinQuantity() {
+            const unit = document.getElementById('cropUnit').value;
+            const quantityInput = document.getElementById('cropQuantity');
+            
+            if (unit === 'kg') {
+                quantityInput.min = 100;
+                quantityInput.placeholder = 'Minimum: 100 kg';
+            } else if (unit === 'quintal') {
+                quantityInput.min = 1;
+                quantityInput.placeholder = 'Minimum: 1 quintal';
+            } else if (unit === 'ton') {
+                quantityInput.min = 0.1;
+                quantityInput.step = 0.1;
+                quantityInput.placeholder = 'Minimum: 0.1 ton';
+            }
+        }
+
+        // Show add crop modal
+        function showAddCropModal() {
+            document.getElementById('addCropModal').classList.add('show');
+            updateMinQuantity(); // Set initial min value
+        }
+
+        // Handle add crop
+        async function handleAddCrop(event) {
+            event.preventDefault();
+
+            const quantity = parseFloat(document.getElementById('cropQuantity').value);
+            const unit = document.getElementById('cropUnit').value;
+
+            // Validate minimum quantity
+            if (unit === 'kg' && quantity < 100) {
+                showToast('Minimum quantity for kg is 100', 'error');
+                return;
+            }
+            if (unit === 'quintal' && quantity < 1) {
+                showToast('Minimum quantity for quintal is 1', 'error');
+                return;
+            }
+            if (unit === 'ton' && quantity < 0.1) {
+                showToast('Minimum quantity for ton is 0.1', 'error');
+                return;
+            }
+
+            const cropName = document.getElementById('cropName').value;
+            const category = document.getElementById('cropCategory').value;
+            
+            const cropData = {
+                farmer_id: currentUser.user_id,
+                crop_name: cropName,
+                category: category,
+                quantity_available: quantity,
+                unit: unit,
+                price_per_unit: parseFloat(document.getElementById('cropPrice').value),
+                harvest_date: document.getElementById('cropHarvestDate').value,
+                location: document.getElementById('cropLocation').value,
+                description: document.getElementById('cropDescription').value,
+                is_organic: document.getElementById('cropOrganic').checked ? 1 : 0,
+                crop_image: api.getCropImage(cropName, category)
+            };
+
+            const result = await api.addCrop(cropData);
+
+            if (result.success) {
+                showToast('Crop added successfully!', 'success');
+                closeModal('addCropModal');
+                document.getElementById('addCropForm').reset();
+                await loadStatistics();
+                await loadMyCrops();
+            } else {
+                showToast(result.message, 'error');
+            }
+        }
+
+        // Delete crop
+        async function deleteCrop(cropId) {
+            if (!confirmDialog('Are you sure you want to delete this crop?')) {
+                return;
+            }
+
+            const result = await api.deleteCrop(cropId);
+
+            if (result.success) {
+                showToast('Crop deleted successfully', 'success');
+                await loadStatistics();
+                await loadMyCrops();
+            } else {
+                showToast(result.message, 'error');
+            }
+        }
+
+        // Approve purchase request
+        async function approveRequest(transactionId) {
+            if (!confirmDialog('Approve this purchase request?')) {
+                return;
+            }
+
+            const result = await api.updateTransactionStatus(transactionId, 'completed');
+
+            if (result.success) {
+                showToast('Purchase request approved!', 'success');
+                await loadStatistics();
+                await loadSales();
+            } else {
+                showToast(result.message, 'error');
+            }
+        }
+
+        // Reject purchase request
+        async function rejectRequest(transactionId) {
+            if (!confirmDialog('Reject this purchase request? This action cannot be undone.')) {
+                return;
+            }
+
+            const result = await api.updateTransactionStatus(transactionId, 'rejected');
+
+            if (result.success) {
+                showToast('Purchase request rejected', 'success');
+                await loadStatistics();
+                await loadSales();
+            } else {
+                showToast(result.message, 'error');
+            }
+        }
+
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Handle logout
+        function handleLogout() {
+            api.logout();
+            showToast('Logged out successfully', 'success');
+            setTimeout(() => {
+                window.location.href = '../index.html';
+            }, 1000);
+        }
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace - Agri-Market</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="../index.html" class="navbar-brand">
+                <i class="fas fa-seedling"></i>
+                Agri-Market
+            </a>
+            <ul class="navbar-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="marketplace.html">Marketplace</a></li>
+                <li id="authLinks"></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Marketplace Header -->
+    <section style="background: linear-gradient(135deg, var(--primary-green), var(--light-green)); color: white; padding: 40px 20px;">
+        <div class="container">
+            <h1><i class="fas fa-store"></i> Marketplace</h1>
+            <p style="font-size: 1.1rem;">Browse fresh produce directly from farmers</p>
+        </div>
+    </section>
+
+    <!-- Search and Filter -->
+    <section style="padding: 30px 20px; background: white;">
+        <div class="container">
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                <div style="flex: 1; min-width: 250px;">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search crops by name or category..." onkeyup="handleSearch()">
+                </div>
+                <button class="btn btn-primary" onclick="loadCrops()">
+                    <i class="fas fa-sync"></i> Refresh
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section style="padding: 40px 20px;">
+        <div class="container">
+            <div id="cropsContainer" class="grid grid-3">
+                <!-- Products will be loaded here -->
+            </div>
+            <div id="emptyState" class="hidden" style="text-align: center; padding: 60px 20px;">
+                <i class="fas fa-inbox" style="font-size: 4rem; color: #ccc; margin-bottom: 1rem;"></i>
+                <h3>No crops available</h3>
+                <p>Check back later for fresh produce from farmers</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Detail Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2 id="modalTitle">Product Details</h2>
+                <button class="modal-close" onclick="closeModal('productModal')">&times;</button>
+            </div>
+            <div id="modalBody">
+                <!-- Product details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Agri-Market. Empowering Farmers, Connecting Communities.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/api.js"></script>
+    <script src="../js/utils.js"></script>
+    <script>
+        let allCrops = [];
+
+        // Load crops on page load
+        window.onload = async function() {
+            updateAuthLinks();
+            await loadCrops();
+        };
+
+        // Update auth links based on login status
+        function updateAuthLinks() {
+            const authLinks = document.getElementById('authLinks');
+            if (isLoggedIn()) {
+                const user = getCurrentUser();
+                authLinks.innerHTML = `
+                    <li><a href="../dashboard/${user.user_type}-dashboard.html">Dashboard</a></li>
+                    <li><a href="#" onclick="handleLogout()">Logout</a></li>
+                `;
+            } else {
+                authLinks.innerHTML = `
+                    <li><a href="../index.html">Login</a></li>
+                `;
+            }
+        }
+
+        // Load all crops
+        async function loadCrops() {
+            const container = document.getElementById('cropsContainer');
+            const emptyState = document.getElementById('emptyState');
+            
+            container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>';
+            
+            allCrops = await api.getAllCrops();
+            
+            if (allCrops.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                displayCrops(allCrops);
+            }
+        }
+
+        // Display crops
+        function displayCrops(crops) {
+            const container = document.getElementById('cropsContainer');
+            
+            container.innerHTML = crops.map(crop => `
+                <div class="product-card">
+                    <img src="${crop.crop_image || 'https://via.placeholder.com/400x200?text=Crop+Image'}" alt="${crop.crop_name}" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">${crop.crop_name}</h3>
+                        <div class="badge badge-success mb-1">${crop.category}</div>
+                        ${crop.is_organic ? '<div class="badge badge-info mb-1">Organic</div>' : ''}
+                        <p class="product-price">${formatCurrency(crop.price_per_unit)}/${crop.unit}</p>
+                        <p style="color: #6c757d; margin-bottom: 0.5rem;">
+                            <i class="fas fa-box"></i> Available: ${crop.quantity_available} ${crop.unit}
+                        </p>
+                        <p style="color: #6c757d; margin-bottom: 1rem;">
+                            <i class="fas fa-map-marker-alt"></i> ${crop.farmer_city}
+                        </p>
+                        <button class="btn btn-primary w-100" onclick="viewProduct('${crop.crop_id}')">
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Search crops
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (query === '') {
+                displayCrops(allCrops);
+            } else {
+                const filtered = allCrops.filter(crop => 
+                    crop.crop_name.toLowerCase().includes(query) ||
+                    crop.category.toLowerCase().includes(query) ||
+                    crop.farmer_city.toLowerCase().includes(query)
+                );
+                displayCrops(filtered);
+            }
+        }
+
+        // View product details
+        async function viewProduct(cropId) {
+            const crop = await api.getCropById(cropId);
+            
+            if (!crop) {
+                showToast('Crop not found', 'error');
+                return;
+            }
+
+            const modalBody = document.getElementById('modalBody');
+            const currentUser = getCurrentUser();
+            const canBuy = currentUser && currentUser.user_type !== 'farmer';
+
+            modalBody.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div>
+                        <img src="${crop.crop_image || 'https://via.placeholder.com/400x300?text=Crop+Image'}" alt="${crop.crop_name}" style="width: 100%; border-radius: 10px;">
+                    </div>
+                    <div>
+                        <h3>${crop.crop_name}</h3>
+                        <div class="badge badge-success">${crop.category}</div>
+                        ${crop.is_organic ? '<div class="badge badge-info">Organic</div>' : ''}
+                        
+                        <h2 style="color: var(--accent-orange); margin: 1rem 0;">
+                            ${formatCurrency(crop.price_per_unit)}/${crop.unit}
+                        </h2>
+                        
+                        <p><strong>Available Quantity:</strong> ${crop.quantity_available} ${crop.unit}</p>
+                        <p><strong>Harvest Date:</strong> ${formatDate(crop.harvest_date)}</p>
+                        <p><strong>Location:</strong> ${crop.location}</p>
+                        
+                        <hr>
+                        
+                        <h4>Farmer Details</h4>
+                        <p><i class="fas fa-user"></i> ${crop.farmer_name}</p>
+                        <p><i class="fas fa-phone"></i> ${crop.farmer_phone}</p>
+                        <p><i class="fas fa-map-marker-alt"></i> ${crop.farmer_city}</p>
+                        
+                        ${canBuy ? `
+                            <hr>
+                            <h4>Send Purchase Request</h4>
+                            <form onsubmit="handleBuy(event, '${crop.crop_id}')">
+                                <div class="form-group">
+                                    <label class="form-label">Quantity (${crop.unit}) - Minimum: ${crop.unit === 'kg' ? '100' : crop.unit === 'quintal' ? '1' : '0.1'}</label>
+                                    <input type="number" class="form-control" id="buyQuantity" min="${crop.unit === 'kg' ? '100' : crop.unit === 'quintal' ? '1' : '0.1'}" max="${crop.quantity_available}" step="${crop.unit === 'ton' ? '0.1' : '1'}" required>
+                                    <small style="color: #6c757d;">Minimum order: ${crop.unit === 'kg' ? '100 kg' : crop.unit === 'quintal' ? '1 quintal' : '0.1 ton'}</small>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Delivery Address</label>
+                                    <textarea class="form-control" id="buyAddress" rows="2" required>${currentUser.address || ''}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Notes (Optional)</label>
+                                    <textarea class="form-control" id="buyNotes" rows="2"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-paper-plane"></i> Send Purchase Request
+                                </button>
+                            </form>
+                        ` : `
+                            <div style="background: #fff3cd; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                                <i class="fas fa-info-circle"></i> Please login as a buyer to send a purchase request
+                            </div>
+                        `}
+                    </div>
+                </div>
+                
+                ${crop.description ? `
+                    <div style="margin-top: 2rem;">
+                        <h4>Description</h4>
+                        <p>${crop.description}</p>
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('productModal').classList.add('show');
+        }
+
+        // Handle buy
+        async function handleBuy(event, cropId) {
+            event.preventDefault();
+
+            const quantity = parseFloat(document.getElementById('buyQuantity').value);
+            const address = document.getElementById('buyAddress').value;
+            const notes = document.getElementById('buyNotes').value;
+
+            const crop = await api.getCropById(cropId);
+            const currentUser = getCurrentUser();
+
+            // Validate minimum quantity
+            if (crop.unit === 'kg' && quantity < 100) {
+                showToast('Minimum order quantity is 100 kg', 'error');
+                return;
+            }
+            if (crop.unit === 'quintal' && quantity < 1) {
+                showToast('Minimum order quantity is 1 quintal', 'error');
+                return;
+            }
+            if (crop.unit === 'ton' && quantity < 0.1) {
+                showToast('Minimum order quantity is 0.1 ton', 'error');
+                return;
+            }
+
+            if (quantity > crop.quantity_available) {
+                showToast('Quantity exceeds available stock', 'error');
+                return;
+            }
+
+            const transactionData = {
+                crop_id: cropId,
+                farmer_id: crop.farmer_id,
+                buyer_id: currentUser.user_id,
+                quantity_sold: quantity,
+                price_per_unit: crop.price_per_unit,
+                total_amount: quantity * crop.price_per_unit,
+                delivery_address: address,
+                notes: notes,
+                new_quantity: crop.quantity_available - quantity
+            };
+
+            const result = await api.createTransaction(transactionData);
+
+            if (result.success) {
+                showToast('Purchase request sent successfully!', 'success');
+                closeModal('productModal');
+                await loadCrops();
+            } else {
+                showToast(result.message, 'error');
+            }
+        }
+
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Handle logout
+        function handleLogout() {
+            api.logout();
+            showToast('Logged out successfully', 'success');
+            setTimeout(() => {
+                window.location.href = '../index.html';
+            }, 1000);
+        }
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>

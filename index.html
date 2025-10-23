@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agri-Market - Connecting Farmers to Society</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <i class="fas fa-seedling"></i>
+                Agri-Market
+            </a>
+            <button class="navbar-toggle" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="navbar-menu" id="navbarMenu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="pages/marketplace.html">Marketplace</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#" onclick="showLoginModal()">Login</a></li>
+                <li><a href="#" onclick="showRegisterModal()">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <h1 class="hero-title">Agri-Market</h1>
+            <p class="hero-subtitle">Connecting Farmers Directly to Society</p>
+            <p style="font-size: 1.1rem; margin-bottom: 2rem;">
+                <i class="fas fa-check-circle"></i> No Middlemen • 
+                <i class="fas fa-check-circle"></i> Fair Prices • 
+                <i class="fas fa-check-circle"></i> Direct Connection
+            </p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="showRegisterModal()">
+                    <i class="fas fa-user-plus"></i> Get Started
+                </button>
+                <button class="btn btn-outline" onclick="showLoginModal()">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <a href="pages/marketplace.html" class="btn btn-secondary">
+                    <i class="fas fa-store"></i> Browse Marketplace
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Types Section -->
+    <section id="features" style="padding: 60px 20px; background: white;">
+        <div class="container">
+            <h2 class="text-center" style="font-size: 2.5rem; margin-bottom: 1rem;">Who Can Join?</h2>
+            <p class="text-center" style="font-size: 1.2rem; color: #6c757d; margin-bottom: 3rem;">
+                Simple registration for everyone in the agricultural community
+            </p>
+            
+            <div class="grid grid-2">
+                <div class="card text-center">
+                    <i class="fas fa-tractor" style="font-size: 3rem; color: var(--primary-green); margin-bottom: 1rem;"></i>
+                    <h3>Farmers</h3>
+                    <p>Sell your crops directly to wholesalers. Get fair prices without middlemen. Minimum sale quantity: 100 kg or 1 quintal.</p>
+                </div>
+                <div class="card text-center">
+                    <i class="fas fa-warehouse" style="font-size: 3rem; color: var(--primary-green); margin-bottom: 1rem;"></i>
+                    <h3>Wholesalers</h3>
+                    <p>Connect with farmers for bulk purchases. Negotiate directly and establish long-term partnerships. Minimum order: 100 kg.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section style="padding: 60px 20px;">
+        <div class="container">
+            <div class="grid grid-3">
+                <div class="card text-center">
+                    <i class="fas fa-handshake" style="font-size: 3rem; color: var(--accent-orange); margin-bottom: 1rem;"></i>
+                    <h3>Direct Connection</h3>
+                    <p>No middlemen between farmers and buyers. Direct communication and fair negotiations.</p>
+                </div>
+                <div class="card text-center">
+                    <i class="fas fa-mobile-alt" style="font-size: 3rem; color: var(--accent-orange); margin-bottom: 1rem;"></i>
+                    <h3>Simple Interface</h3>
+                    <p>Easy-to-use platform designed for farmers with basic computer skills. Works on any device.</p>
+                </div>
+                <div class="card text-center">
+                    <i class="fas fa-chart-line" style="font-size: 3rem; color: var(--accent-orange); margin-bottom: 1rem;"></i>
+                    <h3>Better Prices</h3>
+                    <p>Farmers get better prices, buyers get competitive rates. Everyone benefits from direct trade.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" style="padding: 60px 20px; background: white;">
+        <div class="container">
+            <h2 class="text-center" style="font-size: 2.5rem; margin-bottom: 2rem;">About Agri-Market</h2>
+            <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #6c757d;">
+                    Agri-Market is a revolutionary platform that connects farmers directly with wholesalers, 
+                    eliminating middlemen and ensuring fair prices for everyone. Our mission is to 
+                    empower farmers and provide fresh, quality produce to buyers at competitive rates.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 2rem; text-align: left; margin-bottom: 2rem;">
+                <div>
+                    <h4><i class="fas fa-seedling"></i> Agri-Market</h4>
+                    <p>Connecting farmers directly to society.<br>Empowering agriculture through technology.</p>
+                </div>
+                <div>
+                    <h4>Contact Us</h4>
+                    <p><i class="fas fa-envelope"></i> info@agrimarket.com</p>
+                    <p><i class="fas fa-phone"></i> +91 9876543210</p>
+                </div>
+                <div>
+                    <h4>Quick Links</h4>
+                    <p><a href="#home" style="color: white;">Home</a></p>
+                    <p><a href="pages/marketplace.html" style="color: white;">Marketplace</a></p>
+                    <p><a href="#about" style="color: white;">About</a></p>
+                </div>
+            </div>
+            <hr style="border-color: rgba(255,255,255,0.2); margin: 2rem 0;">
+            <p>&copy; 2024 Agri-Market. Empowering Farmers, Connecting Communities.</p>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login to Agri-Market</h2>
+                <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
+            </div>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Mobile Number</label>
+                    <input type="tel" class="form-control" id="loginPhone" pattern="[6-9][0-9]{9}" placeholder="Enter 10-digit mobile number" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+            <p class="text-center mt-2">
+                <a href="#" onclick="closeModal('loginModal'); showForgotPasswordModal();">Forgot Password?</a>
+            </p>
+            <p class="text-center mt-2">
+                Don't have an account? <a href="#" onclick="closeModal('loginModal'); showRegisterModal();">Register here</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Reset Password</h2>
+                <button class="modal-close" onclick="closeModal('forgotPasswordModal')">&times;</button>
+            </div>
+            <form id="forgotPasswordForm" onsubmit="handleForgotPassword(event)">
+                <div class="form-group">
+                    <label class="form-label">Mobile Number</label>
+                    <input type="tel" class="form-control" id="forgotPhone" pattern="[6-9][0-9]{9}" placeholder="Enter your registered mobile number" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Full Name (for verification)</label>
+                    <input type="text" class="form-control" id="forgotName" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">New Password</label>
+                    <input type="password" class="form-control" id="forgotNewPassword" minlength="6" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm New Password</label>
+                    <input type="password" class="form-control" id="forgotConfirmPassword" minlength="6" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-key"></i> Reset Password
+                </button>
+            </form>
+            <p class="text-center mt-2">
+                Remember your password? <a href="#" onclick="closeModal('forgotPasswordModal'); showLoginModal();">Login here</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2>Register for Agri-Market</h2>
+                <button class="modal-close" onclick="closeModal('registerModal')">&times;</button>
+            </div>
+            <form id="registerForm" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="regFullName" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mobile Number</label>
+                    <input type="tel" class="form-control" id="regPhone" pattern="[6-9][0-9]{9}" placeholder="Enter 10-digit mobile number" required>
+                </div>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="regPassword" minlength="6" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">I am a</label>
+                        <select class="form-control form-select" id="regUserType" required>
+                            <option value="">Select your role</option>
+                            <option value="farmer">Farmer</option>
+                            <option value="wholesaler">Wholesaler</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">City</label>
+                        <input type="text" class="form-control" id="regCity" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">State</label>
+                        <input type="text" class="form-control" id="regState" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <textarea class="form-control" id="regAddress" rows="2" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-user-plus"></i> Register
+                </button>
+            </form>
+            <p class="text-center mt-2">
+                Already have an account? <a href="#" onclick="closeModal('registerModal'); showLoginModal();">Login here</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        // Toggle mobile menu
+        function toggleMenu() {
+            document.getElementById('navbarMenu').classList.toggle('active');
+        }
+
+        // Modal functions
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.add('show');
+        }
+
+        function showRegisterModal() {
+            document.getElementById('registerModal').classList.add('show');
+        }
+
+        function showForgotPasswordModal() {
+            document.getElementById('forgotPasswordModal').classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
+            }
+        }
+
+        // Handle login
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const phone = document.getElementById('loginPhone').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Validate phone
+            if (!isValidPhone(phone)) {
+                showToast('Please enter a valid 10-digit mobile number', 'error');
+                return;
+            }
+
+            const result = await api.loginUser(phone, password);
+
+            if (result.success) {
+                showToast('Login successful! Redirecting...', 'success');
+                setTimeout(() => {
+                    window.location.href = `dashboard/${result.user.user_type}-dashboard.html`;
+                }, 1000);
+            } else {
+                showToast(result.message, 'error');
+            }
+        }
+
+        // Handle forgot password
+        async function handleForgotPassword(event) {
+            event.preventDefault();
+
+            const phone = document.getElementById('forgotPhone').value;
+            const fullName = document.getElementById('forgotName').value;
+            const newPassword = document.getElementById('forgotNewPassword').value;
+            const confirmPassword = document.getElementById('forgotConfirmPassword').value;
+
+            // Validate passwords match
+            if (newPassword !== confirmPassword) {
+                showToast('Passwords do not match!', 'error');
+                return;
+            }
+
+            // Validate phone
+            if (!isValidPhone(phone)) {
+                showToast('Please enter a valid 10-digit mobile number', 'error');
+                return;
+            }
+
+            const result = await api.resetPassword(phone, fullName, newPassword);
+
+            if (result.success) {
+                showToast('Password reset successful! Please login.', 'success');
+                closeModal('forgotPasswordModal');
+                document.getElementById('forgotPasswordForm').reset();
+                setTimeout(() => showLoginModal(), 500);
+            } else {
+                showToast(result.message, 'error');
+            }
+        }
+
+        // Handle registration
+        async function handleRegister(event) {
+            event.preventDefault();
+
+            const phone = document.getElementById('regPhone').value;
+            const password = document.getElementById('regPassword').value;
+
+            // Validate phone
+            if (!isValidPhone(phone)) {
+                showToast('Please enter a valid 10-digit mobile number', 'error');
+                return;
+            }
+
+            const userData = {
+                full_name: document.getElementById('regFullName').value,
+                phone: phone,
+                password: password,
+                user_type: document.getElementById('regUserType').value,
+                city: document.getElementById('regCity').value,
+                state: document.getElementById('regState').value,
+                address: document.getElementById('regAddress').value
+            };
+
+            const result = await api.registerUser(userData);
+
+            if (result.success) {
+                showToast('Registration successful! Logging you in...', 'success');
+                closeModal('registerModal');
+                document.getElementById('registerForm').reset();
+                
+                // Auto-login after registration
+                const loginResult = await api.loginUser(phone, password);
+                
+                if (loginResult.success) {
+                    setTimeout(() => {
+                        window.location.href = `dashboard/${loginResult.user.user_type}-dashboard.html`;
+                    }, 1000);
+                }
+            } else {
+                showToast(result.message, 'error');
+            }
+        }
+
+        // Redirect if already logged in
+        if (isLoggedIn()) {
+            const user = getCurrentUser();
+            window.location.href = `dashboard/${user.user_type}-dashboard.html`;
+        }
+    </script>
+</body>
+</html>
