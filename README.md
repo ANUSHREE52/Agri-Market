@@ -63,8 +63,6 @@ C:\Agri-Market-Frontend/
 - **Font Awesome**: Icons
 - **No Dependencies**: No npm, no build process, no server required!
 
-## 🚀 Getting Started
-
 ### Installation
 
 1. **Download the project** to your local machine:
@@ -82,25 +80,7 @@ C:\Agri-Market-Frontend/
      # Using Node.js
      npx serve
      ```
-
-3. **Start using the application**:
-   - Register as a user (Farmer, Customer, Retailer, or Wholesaler)
-   - Login with your credentials
-   - Access your role-specific dashboard
-
-### No Installation Required!
-This is a pure frontend application. Just open `index.html` in any modern web browser and start using it immediately.
-
-## 📄 License
-
-Open source project for educational purposes. Free to use and modify.
-
-## 👥 Credits
-
-**Developed by**: Agri-Market Team  
-**Purpose**: Connecting farmers directly to society  
-**Mission**: Eliminate middlemen, ensure fair pricing, empower farmers
-
+     
 ## 🎯 Project Goals
 
 1. **Empower Farmers**: Give farmers control over pricing and sales
@@ -110,7 +90,6 @@ Open source project for educational purposes. Free to use and modify.
 5. **Accessibility**: No complex setup or technical knowledge required
 
 ## ⚡ Performance
-
 - **Fast Load Times**: No external dependencies
 - **Instant Updates**: No server roundtrips
 - **Lightweight**: ~50KB total size
