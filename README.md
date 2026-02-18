@@ -1,4 +1,4 @@
-# 🌾 Agri-Market - Frontend Application
+# 🌾 Agri-Market 
 
 A modern, lightweight agricultural marketplace built with **HTML, CSS, JavaScript, and JSON** that connects farmers directly with wholesalers.
 
